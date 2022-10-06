@@ -19,7 +19,8 @@ paraphraser = st.session_state['paraphraser']
 
 if 'storygen' not in st.session_state:
     st.session_state['storygen'] = ttm.TuneTheModel.from_id(
-        '617e1c34211b6878000b0af4a5ca8308'
+        # '617e1c34211b6878000b0af4a5ca8308'  # all rocstories
+        '8d6ab260b4d2db23ae16a9eca582c625'  # only positive rocstories
     )
 storygen = st.session_state['storygen']
 
