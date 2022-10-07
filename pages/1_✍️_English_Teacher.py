@@ -29,7 +29,11 @@ stop = stopwords.words('english')
 samples = [
     'Hapy birfday my dear frend!',
     'Therefore, it is strongly recommended to regular treat items with disinfectants.',
-    'As for me, I think that ecology it\'s not the separated part of our life, but one of the biggest parts of that.'
+    'As for me, I think that ecology it\'s not the separated part of our life, but one of the biggest parts of that.',
+    'And never think that the best profession is where a lot of money. Many people work and feel yourself the worst with every day and afraid change this, because this stability.',
+    'Nowadays you can learn it all in college after you acquire a qualification of a mason, a painter, a roofer or, for example, an electricians.',
+    'People even invented a toothpaste that you can eat so you save even more time by not breakfasting at all. But there are people who just cannot stand it.',
+    'If people know and remember the dangers of electric current, they will be able to protect themselves and their loved ones from its effects.'
 ]
 
 if 'eng_teacher_input' not in st.session_state:
@@ -70,7 +74,22 @@ def make_up_a_story(keywords):
 
 
 def main():
-    st.title('English Teacher')
+    c1, c2 = st.columns([3, 1])
+    c1.title('English Teacher')
+    smalltalk_logl_url = 'https://static.tildacdn.com/tild3431-6362-4434-b336-393736666264/logo_smalltalk.svg'
+    smalltalk_url = 'https://smalltalk2.me/'
+    c2.markdown(f"[![SmallTalk]({smalltalk_logl_url})]({smalltalk_url})")
+
+    'You can tune the model to correct the student\'s mistakes automatically!'
+    'Moreover, you can automatically extract words with mistakes and make up '\
+        'a story using tuned generator for better memorization!'
+    st.markdown('Similar solutions based on TuneTheModel will be used '
+                f'in [SmallTalk]({smalltalk_url})'
+                ' - AI-powered simulator to self-practice '
+                'the IELTS speaking test, job interview and '
+                'everyday conversational English')
+
+    # st.image('img/logo_smalltalk.svg')
 
     if st.button('Give me an example!'):
         st.session_state['eng_teacher_input'] = choose(
@@ -78,26 +97,26 @@ def main():
         )
 
     inp = st.text_area(
-        'Your phrase', value=st.session_state['eng_teacher_input'],
+        'Your sentence', value=st.session_state['eng_teacher_input'],
         max_chars=250
     )
 
-    st.button('Improve my text!')
+    st.button('Improve the text!')
 
     if utils.is_fraud(inp):
-        st.warning('Your text is a bit unusual, the results may be bad')
+        st.warning('This text is a bit unusual, the results may be bad')
 
-    with st.spinner("Improving your text using tuned generator..."):
+    with st.spinner("Improving the text using tuned generator..."):
         correct = improve_text(inp)
 
     if correct == inp:
         st.info(
-            'Your text is already pretty cool!\n'
+            'The text is already pretty cool!\n'
             'Try another text with some mistakes.'
         )
         return
 
-    st.subheader('We would suggest you to correct your text:')
+    st.subheader('The model suggests rewriting the text as follows:')
     st.markdown(f'## `{correct}`')
 
     text_p = extract_words(inp)
@@ -106,7 +125,7 @@ def main():
     new_words = list(set(gen_p) - set(text_p) - set(stop))
 
     if not new_words:
-        st.info('There are no new words for you this time, you did well!')
+        st.info('There are no new words in this text, you did well!')
         return
 
     '------'

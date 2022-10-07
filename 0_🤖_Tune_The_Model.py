@@ -61,9 +61,22 @@ def vanila_gen(text):
 
 
 def main():
-    st.title('Tune The Model')
+    # st.title('Tune The Model')
+    st.image('img/logo.png')
+
+    st.markdown('[Tune the Model](tunethemodel.com) allows you '
+                'to create a custom text AI tailored for your application.')
+
+    'Powered by huge pre-trained transformer language models, '\
+        'Tune the Model enables you to create text AI and bring it '\
+        'to production without investing in labelling large datasets, '\
+        'running tons of experiments, or setting up GPU cloud.'
 
     st.header("Few-shot samples")
+
+    'Some tasks may be solved with just a few samples. You can pass '\
+        'several examples to the model input, and it will try to find '\
+        'the answer for the last query by continuing your text.'
 
     prompts = {
         "Email generator": """Command: Thank Sid for the gift cards

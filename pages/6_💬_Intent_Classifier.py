@@ -50,9 +50,18 @@ def prettify_label(text):
 
 
 samples = [
-    'wake me up at five am this week',
+    # 'wake me up at five am this week',
     'i like senatra songs',
-    'what\'s the time in australia'
+    'what\'s the time in australia',
+    'set lights brightness higher',
+    'could you order sushi for tonight dinner',
+    'what\'s the week\'s forecast',
+    'play it again please',
+    'can they do delivery',
+    'tell me some business news',
+    'play my rock playlist',
+    'should i bring an umbrella tomorrow',
+    'i can barely hear you'
 ]
 
 
@@ -71,11 +80,16 @@ def classify_intent(text):
 
 @st.cache(show_spinner=False)
 def generate_slots(text):
-    return slot_generator.generate(text)[0]
+    return slot_generator.generate(text, temperature=0.2)[0]
 
 
 def main():
     st.title('Intent Classifier')
+
+    'You can build a complex system using tuned '\
+        'models as components. For example, '\
+        'you can classify user intentions '\
+        'for your chatbot!'
 
     if st.button('Give me an example!'):
         st.session_state['intent_input'] = choose(

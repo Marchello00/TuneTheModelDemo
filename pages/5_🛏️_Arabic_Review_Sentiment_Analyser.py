@@ -23,7 +23,11 @@ samples = [
     # 'Good. . I asked to have two beds in the room and they told me they could, but they couldn't
     'جيد. . طلبت ضم سريرين الغرفه واخبروني انه بامكانهم ذلك لكن لم يتمكنو من ذلك',
     # “Unpleasant smell”. Nothing, unfortunately. Unpleasant smell in the room and corridors all the time
-    '“رائحة كريهة”. لاشئ للاسف. رائحة كريهة بالغرفة والممرات طول الوقت'
+    '“رائحة كريهة”. لاشئ للاسف. رائحة كريهة بالغرفة والممرات طول الوقت',
+    # "The nut ruined the first mo breath”. . The reception staff is of poor standard and is very late in completing the transaction the value of the buffet is very high
+    '“القندق خرب مو نفس اول”. . طاقم الاستقبال ضعيف المستوى ويتأخر جدا في انجاز المعاملهقيمة البوفيه عاليه جدا',
+    # "Good”. Clean, calm handling is great. The restaurant and the food are public and there are no private cars in the hotel
+    '“جيده”. نظافه هدوء تعامل رائع. المطعم والاكل بصفه عامه وعدم وجود سيارات خاصه بالفندق',
 ]
 
 if 'ar_review_input' not in st.session_state:
@@ -44,6 +48,9 @@ def analyse_review(review):
 
 def main():
     st.title('Arabic Review Sentiment Analyser')
+
+    # Of course, you can tune the neural network to solve classical problems, such as sentiment analysis
+    'بالطبع ، يمكنك ضبط الشبكة العصبية لحل المشكلات الكلاسيكية ، مثل تحليل المشاعر'
 
     _, _, _, _, _, c6 = st.columns(6)
     if c6.button('!أعطني مثالا'):
