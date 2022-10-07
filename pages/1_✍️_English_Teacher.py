@@ -27,13 +27,13 @@ storygen = st.session_state['storygen']
 stop = stopwords.words('english')
 
 samples = [
-    'Hapy birfday my dear frend!',
-    'Therefore, it is strongly recommended to regular treat items with disinfectants.',
+    'Happy birfday my dear frend! I wish you everything good and good luck!',
+    'Therefore, it is strongly recommended to regular treat items with desinfectants.',
     'As for me, I think that ecology it\'s not the separated part of our life, but one of the biggest parts of that.',
-    'And never think that the best profession is where a lot of money. Many people work and feel yourself the worst with every day and afraid change this, because this stability.',
-    'Nowadays you can learn it all in college after you acquire a qualification of a mason, a painter, a roofer or, for example, an electricians.',
-    'People even invented a toothpaste that you can eat so you save even more time by not breakfasting at all. But there are people who just cannot stand it.',
-    'If people know and remember the dangers of electric current, they will be able to protect themselves and their loved ones from its effects.'
+    'Never think that the best profession is where a lot of money. Many people work and feel selfs worst every day and are afraiding of change this.',
+    # 'Nowadays you can learn it all in college after you acquire a qualification of a mason, a painter, a roofer or, for example, an electricians.',
+    'People created even a toothpaste that you can eat so you save even more time by not breakfasting at all.',
+    'If people know and remember dangerous of electricity current, they will be able to protect them and people who they love from its effects.'
 ]
 
 if 'eng_teacher_input' not in st.session_state:

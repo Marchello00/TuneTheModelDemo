@@ -72,76 +72,76 @@ def main():
         'to production without investing in labelling large datasets, '\
         'running tons of experiments, or setting up GPU cloud.'
 
-    st.header("Few-shot samples")
+#     st.header("Few-shot samples")
 
-    'Some tasks may be solved with just a few samples. You can pass '\
-        'several examples to the model input, and it will try to find '\
-        'the answer for the last query by continuing your text.'
+#     'Some tasks may be solved with just a few samples. You can pass '\
+#         'several examples to the model input, and it will try to find '\
+#         'the answer for the last query by continuing your text.'
 
-    prompts = {
-        "Email generator": """Command: Thank Sid for the gift cards
-Email: Hey Sid, Thank you so much for the gift cards. I really appreciate it. I hope to see you soon. Best, Aidan.
-
-
-Command: Invoice Nicole $500 for financial modeling
-Email: Dear Nicole, This is my invoice for $500 for the financial modeling. It was a pleasure to work with you. Sincerely, Dustin.
+#     prompts = {
+#         "Email generator": """Command: Thank Sid for the gift cards
+# Email: Hey Sid, Thank you so much for the gift cards. I really appreciate it. I hope to see you soon. Best, Aidan.
 
 
-Command: Tell Kiyan that they made it to the next round
-Email: Hey Kiyan, You've moved forward to the next round of interviews. The team is looking forward to seeing you again. Sincerely, Nora.
+# Command: Invoice Nicole $500 for financial modeling
+# Email: Dear Nicole, This is my invoice for $500 for the financial modeling. It was a pleasure to work with you. Sincerely, Dustin.
 
 
-Command: Ask Adrien for a coffee chat
-Email: Hey Adrien, Long time no see! Let's catch up and grab coffee. What's your schedule look like? Regards, Amr
+# Command: Tell Kiyan that they made it to the next round
+# Email: Hey Kiyan, You've moved forward to the next round of interviews. The team is looking forward to seeing you again. Sincerely, Nora.
 
 
-Command: Tell Robert to keep up the good work
-Email: """,
-        "Topic extractor": """Text: We often read about children who have betrayed their parents in acts of selfishness or even in times of Civil War. But what would be the worst way for a parent to betray their own child?
+# Command: Ask Adrien for a coffee chat
+# Email: Hey Adrien, Long time no see! Let's catch up and grab coffee. What's your schedule look like? Regards, Amr
 
 
-Topics: family, children, betrayal
-
--------------------
-
-Text: Classical economics states that money constitutes of four chief functions: medium, measure, standards and store. Money used in this form eliminates the inefficiencies associated with the traditional barter system, for instance double coincidence of wants. In this context, money can be viewed as a unit that is used to measure the worth of deferred payment. From this perspective, money as a unit of account is a key requirement during the making of agreements that entail debt or future payments.
+# Command: Tell Robert to keep up the good work
+# Email: """,
+#         "Topic extractor": """Text: We often read about children who have betrayed their parents in acts of selfishness or even in times of Civil War. But what would be the worst way for a parent to betray their own child?
 
 
-Topics: money, economics
+# Topics: family, children, betrayal
 
--------------------
+# -------------------
 
-Text: Ginger is native to Southern Asia and was later cultivated in Ancient China as a food source and medicine. Over time, ginger cultivation spread to India, from there it was carried to the Middle East as part of the spice trade. As crusaders returned home to Europe from the Middle East, they brought spices with them, including cinnamon, pepper and ginger.
+# Text: Classical economics states that money constitutes of four chief functions: medium, measure, standards and store. Money used in this form eliminates the inefficiencies associated with the traditional barter system, for instance double coincidence of wants. In this context, money can be viewed as a unit that is used to measure the worth of deferred payment. From this perspective, money as a unit of account is a key requirement during the making of agreements that entail debt or future payments.
 
-Topics: """,
-        "Simple generator": "Powered by huge pre-trained transformer language models, Tune the Model enables you to create text AI and bring it to production without investing in labelling large datasets, running tons of experiments, or setting up GPU cloud."
-    }
 
-    tabs = st.tabs(list(prompts))
+# Topics: money, economics
 
-    for tab, (tab_name, prompt) in zip(tabs, prompts.items()):
-        with tab:
-            inp = st.text_area(
-                "Type text, and model will try to continue it",
-                value=prompt,
-                max_chars=2000,
-                height=200,
-            )
+# -------------------
 
-            if not inp:
-                st.error("Input text cannot be empty")
-                return
+# Text: Ginger is native to Southern Asia and was later cultivated in Ancient China as a food source and medicine. Over time, ginger cultivation spread to India, from there it was carried to the Middle East as part of the spice trade. As crusaders returned home to Europe from the Middle East, they brought spices with them, including cinnamon, pepper and ginger.
 
-            st.subheader('Generated continuation')
+# Topics: """,
+#         "Simple generator": "Powered by huge pre-trained transformer language models, Tune the Model enables you to create text AI and bring it to production without investing in labelling large datasets, running tons of experiments, or setting up GPU cloud."
+#     }
 
-            with st.spinner("Generating continuation using tune..."):
-                result = vanila_gen(inp)
-                if tab_name == "Topic extractor":
-                    try:
-                        result = result.split('\n\n')[0]
-                    except Exception:
-                        pass
-            st.write(result)
+#     tabs = st.tabs(list(prompts))
+
+#     for tab, (tab_name, prompt) in zip(tabs, prompts.items()):
+#         with tab:
+#             inp = st.text_area(
+#                 "Type text, and model will try to continue it",
+#                 value=prompt,
+#                 max_chars=2000,
+#                 height=200,
+#             )
+
+#             if not inp:
+#                 st.error("Input text cannot be empty")
+#                 return
+
+#             st.subheader('Generated continuation')
+
+#             with st.spinner("Generating continuation using tune..."):
+#                 result = vanila_gen(inp)
+#                 if tab_name == "Topic extractor":
+#                     try:
+#                         result = result.split('\n\n')[0]
+#                     except Exception:
+#                         pass
+#             st.write(result)
 
 
 if __name__ == '__main__':
