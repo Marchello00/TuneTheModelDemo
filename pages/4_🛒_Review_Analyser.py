@@ -1,69 +1,41 @@
-import tune_the_model as ttm
 import streamlit as st
-from nltk.corpus import stopwords
 import pandas as pd
-import re
-import random
-import importlib
+import core.utils
+import core.review_analyser
+from samples.review_analyser import samples
 
 st.set_page_config(
         page_title="🛒 Review Analyser",
 )
 
 if 'aspect_extractor' not in st.session_state:
-    st.session_state['aspect_extractor'] = ttm.TuneTheModel.from_id(
-        '144ad1e9a353cbbe7c3ef2cc88b9b267'
-    )
+    st.session_state['aspect_extractor'] = \
+        core.review_analyser.get_aspect_extractor()
+
 
 if 'aspect_sentiment' not in st.session_state:
-    st.session_state['aspect_sentiment'] = ttm.TuneTheModel.from_id(
-        '585b68935afbc2b11af34ed7234dfe84'
-    )
-aspect_label_mapping = {
-    0: 'Absent',
-    1: 'Negative',
-    2: 'Neutral',
-    3: 'Positive'
-}
+    st.session_state['aspect_sentiment'] = \
+        core.review_analyser.get_aspect_sentiment_classifier()
 
-
-samples = [
-    'The media could not be loaded. This is really nice. If it lasts, that will be awesome. Super quiet motor, and good air movement. Nice color too. Thought the blades were metal, but are plastic... but that’s okay.',
-    'Always worked with mud pans when doing drywall work around the house. This is so much easier to work with and more comfortable.',
-    'As for me, I think that ecology it\'s not the separated part of our life, but one of the biggest parts of that.',
-    'The book is of high quality. The print quality is very good.If you’re a fan of old Hollywood and photography, especially the Kodak Kodachrome film stock, this is a must have book.',
-    'dog did not like the smell, would not go near them.!',
-    # 'only for pc. there is not app for this watch and hopefully you will have on your computer rar program or something similar.',
-    'I don\'t see any difference after applying this. The only difference I get is that my foundation doesn\'t apply as smoothly.',
-
-]
 
 if 'review_input' not in st.session_state:
-    st.session_state['review_input'] = random.choice(samples)
+    st.session_state['review_input'] = core.utils.choose(samples)
 
 
-def choose(arr, prev):
-    return random.choice(list(set(arr) - {prev}))
-
-
-def create_aspect_sent_prompt(review, aspect):
-    return review + '\nAspect: ' + aspect + '\nQuality: '
-
-
-@st.cache(show_spinner=False)
 def extract_aspects(review):
-    aspects = st.session_state['aspect_extractor'].generate(
-        review, num_hypos=20, temperature=1.2
+    return core.review_analyser.extract_aspects(
+        st.session_state['aspect_extractor'],
+        review
     )
-    return list(set(aspects))
 
 
 @st.cache(show_spinner=False)
 def analyse_aspect(review, aspect):
-    result = st.session_state['aspect_sentiment'].classify(
-        create_aspect_sent_prompt(review, aspect)
+    return core.review_analyser.analyse_aspect(
+        st.session_state['aspect_sentiment'],
+        review,
+        aspect
     )
-    return dict(zip(aspect_label_mapping.values(), result))
 
 
 def main():
@@ -77,7 +49,7 @@ def main():
         'positive or negative and whether it is actually present in review'
 
     if st.button('Give me an example!'):
-        st.session_state['review_input'] = choose(
+        st.session_state['review_input'] = core.utils.choose(
             samples, st.session_state['review_input']
         )
 

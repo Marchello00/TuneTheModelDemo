@@ -1,75 +1,55 @@
 import streamlit as st
-import tune_the_model as ttm
-import pandas as pd
-import numpy as np
-import random
+import core.utils
+import core.spanish_question_answering
+from core.constants import generation_warning
+from samples.spanish_question_answering import samples
 
 st.set_page_config(
-        page_title="❓ Question Answering",
+    page_title="❓ Question Answering",
 )
 
 if 'question_gen' not in st.session_state:
-    st.session_state['question_gen'] = ttm.TuneTheModel.from_id(
-        '1da0fd05bb47b624a909ec15d5cdfdae'
-    )
+    st.session_state['question_gen'] = \
+        core.spanish_question_answering.get_question_gen()
 
 if 'question_answering' not in st.session_state:
-    st.session_state['question_answering'] = ttm.TuneTheModel.from_id(
-        '4750baa83e6e11ed92bd37630e193abd'
-    )
+    st.session_state['question_answering'] = \
+        core.spanish_question_answering.get_question_answering()
 
 
 if 'answer_checker' not in st.session_state:
-    st.session_state['answer_checker'] = ttm.TuneTheModel.from_id(
-        'bd4adc983e6e11ed855d6bb9c6ece3e5'
-    )
-
-
-question_gen = st.session_state['question_gen']
-answer_checker = st.session_state['answer_checker']
-question_answering = st.session_state['question_answering']
-
-
-samples = [
-    'El 6 de febrero de 2016, un día antes de su actuación en el super bowl, Beyoncé lanzó un nuevo single exclusivamente en el servicio de streaming de música Marea llamado formación.',
-    'La temporada diez es la primera en incluir audiciones en línea donde los concursantes podrían presentar una audición de vídeo de 40 segundos a través de Myspace. Karen Rodríguez fue una de esas audicionante y llegó a las rondas finales.',
-    'A partir de 2010/2011, hauptschulen se fusionaron con realschulen y gesamtschulen para formar un nuevo tipo de escuela integral en los estados alemanes de Berlín y Hamburgo, llamado stadtteilschule en Hamburgo y sekundärschule en Berlín (ver: Educación en Berlín, educación en Hamburgo).'
-]
-
-
-def choose(arr, prev):
-    return random.choice(list(set(arr) - {prev}))
+    st.session_state['answer_checker'] = \
+        core.spanish_question_answering.get_answer_checker()
 
 
 if 'qa_text' not in st.session_state:
-    st.session_state['qa_text'] = random.choice(samples)
-
-
-def create_qa_promp(context, question):
-    return context + '\n\n' + question + '\n\n\n'
-
-
-def create_checker_prompt(context, question, answer):
-    return create_qa_promp(context, question) + answer
+    st.session_state['qa_text'] = core.utils.choose(samples)
 
 
 def generate_question(text):
-    return question_gen.generate(text)[0]
+    return core.spanish_question_answering.generate_question(
+        st.session_state['question_gen'],
+        text
+    )
 
 
 @st.cache(show_spinner=False)
 def answer_question(text, question):
-    answers = question_answering.generate(
-        create_qa_promp(text, question), num_hypos=8, temperature=0.8
+    return core.spanish_question_answering.answer_question(
+        st.session_state['question_answering'],
+        text,
+        question
     )
-    return np.unique(answers)
 
 
 @st.cache(show_spinner=False)
 def score_answer(text, question, answer):
-    return answer_checker.classify(
-        create_checker_prompt(text, question, answer)
-    )[0]
+    return core.spanish_question_answering.score_answer(
+        st.session_state['answer_checker'],
+        text,
+        question,
+        answer
+    )
 
 
 def main():
@@ -83,7 +63,7 @@ def main():
         'different hypotheses and choose the best one!'
 
     if st.button('Give me example text!'):
-        st.session_state['qa_text'] = choose(
+        st.session_state['qa_text'] = core.utils.choose(
             samples, st.session_state['qa_text']
         )
         st.session_state.pop('qa_question')
@@ -99,12 +79,14 @@ def main():
         return
 
     if st.button('Generate question') or\
-        'qa_question' not in st.session_state:
+            'qa_question' not in st.session_state:
         with st.spinner("Generating question using tuned generator..."):
             st.session_state['qa_question'] = generate_question(text)
 
     st.subheader('Question')
-    real_question = st.text_input('Question', value=st.session_state['qa_question'])
+    real_question = st.text_input(
+        'Question', value=st.session_state['qa_question'])
+    st.caption(generation_warning)
 
     st.button('Generate an answer!')
 

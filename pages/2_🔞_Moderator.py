@@ -1,51 +1,24 @@
 import streamlit as st
-import tune_the_model as ttm
 import pandas as pd
-import random
+import core.moderator
+import core.utils
+from samples.moderator import samples
 
 st.set_page_config(
-        page_title="🔞 Moderator",
+    page_title="🔞 Moderator",
 )
 
 if 'moderator' not in st.session_state:
-    st.session_state['moderator'] = ttm.TuneTheModel.from_id(
-        'dmfe5l5uq6djz42jbj8oqesm77locg6x'
-    )
-
-
-moderator = st.session_state['moderator']
-moderator_mapping = [
-    'Alcohol',
-    'Clean text',
-    'Obscene/Insult',
-    'Porn/Erotica',
-    'Sex Toys',
-    'Smoking/Drugs',
-    'Spam/Clickbait',
-    'Violence/Shock',
-    'Weapon'
-]
-
-samples = [
-    'A very sturdy and elegant knife. Works as good as it looks.',
-    'What a train wreck! He sounds like he smoked so much that he could hack up a lung!',
-    'what a piece of $#!% don\'t waste your money even if you have more money than brains.it ain\'t worth it.',
-    # 'Wife gets naked and dances more in the shower....win win.',
-    'I never knew my agency hated me and now I do. Rotten bastards!',
-    'very handy and I am giving them out as gifts to members of the Amateur Radio Lighthouse Society ( http://arlhs [dot] com }',
-]
-
-def choose(arr, prev):
-    return random.choice(list(set(arr) - {prev}))
+    st.session_state['moderator'] = core.moderator.get_moderator()
 
 
 if 'moderator_input' not in st.session_state:
-    st.session_state['moderator_input'] = random.choice(samples)
+    st.session_state['moderator_input'] = core.utils.choose(samples)
 
 
 @st.cache(show_spinner=False)
 def moderate(text):
-    return moderator.classify(text)
+    return core.moderator.moderate_labeled(st.session_state['moderator'], text)
 
 
 def main():
@@ -58,7 +31,7 @@ def main():
         'are undesirable for your service'
 
     if st.button('Give me an example!'):
-        st.session_state['moderator_input'] = choose(
+        st.session_state['moderator_input'] = core.utils.choose(
             samples, st.session_state['moderator_input']
         )
 
@@ -74,10 +47,9 @@ def main():
         return
 
     with st.spinner("Analysing text using tuned classifier..."):
-        results = moderate(inp)
+        resutls = moderate(inp)
 
-    data = {key: prob for key, prob in zip(moderator_mapping, results)}
-    st.bar_chart(data=pd.Series(data, name='Probability'))
+    st.bar_chart(data=pd.Series(resutls, name='Probability'))
 
 
 if __name__ == '__main__':
