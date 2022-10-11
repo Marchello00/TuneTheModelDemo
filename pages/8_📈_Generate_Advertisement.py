@@ -2,6 +2,7 @@ import streamlit as st
 import core.utils
 import core.constants
 import core.generate_advertisement
+from samples.generate_advertisement import samples
 
 st.set_page_config(
         page_title="📈 Generate Advertisement",
@@ -22,6 +23,9 @@ if 'banner_classifier' not in st.session_state:
 if 'banner_generator' not in st.session_state:
     st.session_state['banner_generator'] =\
         core.generate_advertisement.get_banner_generator()
+
+if 'adgen_input' not in st.session_state:
+    st.session_state['adgen_input'] = core.utils.choose(samples)
 
 
 def gen_keywords(title, content, temp):
@@ -106,7 +110,11 @@ def main():
         'by the content of the website! Also you can tune generator '\
         'to make up search queries for your page!'
 
-    url = st.text_input('URL', value='https://www.northstardubai.com/')
+    if st.button('Give me an example!'):
+        st.session_state['adgen_input'] = core.utils.choose(
+            samples, st.session_state['adgen_input']
+        )
+    url = st.text_input('URL', value=st.session_state['adgen_input'])
     button_load_data = st.button("Generate!")
     c1, c2 = st.columns(2)
     with c1:
