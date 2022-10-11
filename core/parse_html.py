@@ -15,6 +15,7 @@ class Doc:
     url: str
     html: str
     title: str
+    text: str
     toc: 'Toc'
 
 
@@ -100,6 +101,25 @@ def parse_content(doc) -> Toc:
 
     # Find all paragraphs and headers.
     document = BeautifulSoup(doc.html, "lxml")
+    simple_text = document.get_text(' ')
+
+    titles = []
+    descriptions = []
+
+    for meta in document.find_all('meta'):
+        prop = meta.attrs.get('property', '')
+        name = meta.attrs.get('name', '')
+        text = meta.attrs.get('content', '')
+        for tp in [prop, name]:
+            if 'title' in tp:
+                titles.append(text)
+            if 'site_name' in tp:
+                titles.append(text)
+            if 'description' in tp:
+                descriptions.append(text)
+    meta_title = '. '.join(titles)
+    meta_descr = ' '.join(descriptions)
+
     all_nodes = document.find_all(re.compile("^h[1-6]$|^p$"))
 
     # Collect.
@@ -129,7 +149,7 @@ def parse_content(doc) -> Toc:
             current_toc.append(child)
             current_toc_level.append(level)
 
-    return toc
+    return toc, simple_text, meta_title, meta_descr
 
 
 def download(url: str, timeout: int = 5) -> bytes:
@@ -158,15 +178,36 @@ def download_cloudscraper(url: str):
 
 
 def page_parser(url):
-    if '://' not in url:
+    variants = [url]
+    if 'www.' not in url:
+        if '://' in url:
+            prot, dom = url.split('://')
+            variants.append(prot + '://www.' + dom)
+        else:
+            variants.append('www.' + url)
+    new_var = []
+    for url in variants:
+        if '://' not in url:
+            new_var.append('https://' + url)
+            new_var.append('http://' + url)
+    new_var.extend(variants)
+    variants = new_var
+
+    for url in variants:
         try:
-            html = download('https://' + url)
+            html = download_cloudscraper(url)
+            if html:
+                break
         except Exception:
-            html = download('http://' + url)
-    else:
-        html = download_cloudscraper(url)
-    doc = Doc(0, url, html, title='', toc=None)
+            pass
+    doc = Doc(0, url, html, title='', text='', toc=None)
     doc.title = parse_title(doc)
-    doc.toc = parse_content(doc)
+    doc.toc, doc.text, meta_title, meta_descr = parse_content(doc)
+    if not doc.title:
+        doc.title = meta_title
     content = '\n'.join([s.text for s in doc.toc.all_segments])
+    if not content:
+        content = doc.text
+    if meta_title or meta_descr:
+        content = ' '.join([meta_title, meta_descr]) + ' ' + content
     return doc.title, content

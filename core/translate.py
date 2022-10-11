@@ -49,9 +49,14 @@ def translate(texts, target_language='ru', folder_id=DEFAULT_CLOUD_FOLDER):
     if folder_id is None:
         folder_id = get_folder()
 
+    empty_mask = [text.strip() == "" for text in texts]
+    if all(empty_mask):
+        return texts
+    submit_texts = [t for mask, t in zip(empty_mask, texts) if not mask]
+
     body = {
         "targetLanguageCode": target_language,
-        "texts": texts,
+        "texts": submit_texts,
         "folderId": folder_id,
     }
 
@@ -63,4 +68,11 @@ def translate(texts, target_language='ru', folder_id=DEFAULT_CLOUD_FOLDER):
         headers=headers
     )
 
-    return [t['text'] for t in response.json()['translations']]
+    resp_texts = [t['text'] for t in response.json()['translations']]
+    txt_iter = iter(resp_texts)
+    results = texts
+    for i, mask in enumerate(empty_mask):
+        if not mask:
+            results[i] = next(txt_iter)
+
+    return results

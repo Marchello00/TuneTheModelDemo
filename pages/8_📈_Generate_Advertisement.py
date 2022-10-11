@@ -5,7 +5,7 @@ import core.generate_advertisement
 from samples.generate_advertisement import samples
 
 st.set_page_config(
-        page_title="📈 Generate Advertisement",
+    page_title="📈 Generate Advertisement",
 )
 
 if 'keyword_classifier' not in st.session_state:
@@ -82,7 +82,7 @@ def process(url, keywords_temp, banner_temp):
     with c1:
         with st.spinner("Generating banners..."):
             st.session_state["banners"] = gen_banners(
-                title, content, banner_temp
+                orig_title, content, banner_temp
             )
 
         for h, t in st.session_state["banners"]:
@@ -93,7 +93,11 @@ def process(url, keywords_temp, banner_temp):
 
     with c2:
         with st.spinner("Generating keywords..."):
-            keywords = gen_keywords(title, content, keywords_temp)
+            keywords = gen_keywords(
+                title,
+                content,
+                keywords_temp
+            )
             st.session_state["keywords"] = keywords
 
         for t in st.session_state["keywords"]:
@@ -115,7 +119,7 @@ def main():
             samples, st.session_state['adgen_input']
         )
     url = st.text_input('URL', value=st.session_state['adgen_input'])
-    button_load_data = st.button("Generate!")
+    st.button("Generate!")
     c1, c2 = st.columns(2)
     with c1:
         st.subheader('Banner generation parameters')
