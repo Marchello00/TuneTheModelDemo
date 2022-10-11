@@ -3,8 +3,9 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-IAM_TOKEN = os.environ.get('IAM_TOKEN')
-# TRANSLATE_API_KEY = os.environ.get('TRANSLATE_API_KEY')
+IAM_TOKEN = os.environ.get('IAM_TOKEN', "")
+TRANSLATE_API_KEY = os.environ.get('TRANSLATE_API_KEY')
+DEFAULT_CLOUD_FOLDER = os.environ.get('DEFAULT_CLOUD_FOLDER', None)
 RESOURCE_MANAGER_API = \
         "https://resource-manager.api.cloud.yandex.net/resource-manager/v1"
 TRANSLATE_API = "https://translate.api.cloud.yandex.net/translate/v2/translate"
@@ -13,9 +14,9 @@ TRANSLATE_API = "https://translate.api.cloud.yandex.net/translate/v2/translate"
 def get_headers(iam=False):
     return {
         "Content-Type": "application/json",
-        "Authorization": "Bearer {0}".format(IAM_TOKEN)
-        # "Authorization": f"Bearer {IAM_TOKEN}" if iam else f"Api-Key {TRANSLATE_API_KEY}"
-        # "Authorization": f"Api-Key {TRANSLATE_API_KEY}"
+        "Authorization": f"Bearer {IAM_TOKEN}"
+                         if iam else
+                         f"Api-Key {TRANSLATE_API_KEY}"
     }
 
 
@@ -44,7 +45,7 @@ def get_folder(cloud_id=None):
     return responce.json()["folders"][0]["id"]
 
 
-def translate(texts, target_language='ru', folder_id=None):
+def translate(texts, target_language='ru', folder_id=DEFAULT_CLOUD_FOLDER):
     if folder_id is None:
         folder_id = get_folder()
 
