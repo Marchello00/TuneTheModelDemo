@@ -3,15 +3,24 @@ import pandas as pd
 import numpy as np
 import core.translate
 import core.parse_html
+import time
 
 
-def get_title_and_content(url):
-    title, content = core.parse_html.page_parser(url)
-    content = content[:5000]
-    trans_title, trans_content = core.translate.translate(
-        [title, content], target_language='ru'
-    )
-    return trans_title, trans_content, title, content
+def get_title_and_content(url, num_retries=5):
+    for retry in range(num_retries):
+        try:
+            title, content = core.parse_html.page_parser(url)
+        except Exception:
+            time.sleep(1 + retry)
+            continue
+        if len(title) + len(content) < 500 and retry < num_retries - 1:
+            time.sleep(1 + retry)
+            continue
+        content = content[:5000]
+        trans_title, trans_content = core.translate.translate(
+            [title, content], target_language='ru'
+        )
+        return trans_title, trans_content, title, content
 
 
 def get_keyword_classifier():
