@@ -6,6 +6,7 @@ import lxml.html
 import re
 
 from bs4 import BeautifulSoup
+import cloudscraper
 
 
 @dataclass
@@ -148,6 +149,14 @@ def download(url: str, timeout: int = 5) -> bytes:
     return None
 
 
+def download_cloudscraper(url: str):
+    scraper = cloudscraper.create_scraper()
+    try:
+        return scraper.get(url).text
+    except Exception:
+        return None
+
+
 def page_parser(url):
     if '://' not in url:
         try:
@@ -155,7 +164,7 @@ def page_parser(url):
         except Exception:
             html = download('http://' + url)
     else:
-        html = download(url)
+        html = download_cloudscraper(url)
     doc = Doc(0, url, html, title='', toc=None)
     doc.title = parse_title(doc)
     doc.toc = parse_content(doc)

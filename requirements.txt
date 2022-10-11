@@ -6,3 +6,4 @@ pyenchant==3.2.2
 python-dotenv==0.21.0
 lxml==4.9.1
 bs4==0.0.1
+cloudscraper==1.2.64
