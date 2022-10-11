@@ -7,7 +7,7 @@ import core.parse_html
 
 def get_title_and_content(url):
     title, content = core.parse_html.page_parser(url)
-    content = content[:1500]
+    content = content[:5000]
     trans_title, trans_content = core.translate.translate(
         [title, content], target_language='ru'
     )
@@ -99,7 +99,7 @@ def gen_keywords(
         [
             (keyword, scores)
             for keyword, scores in result
-            if scores[scores['Property'] == 'No match']['Score'].iloc[0] < 0.1
+            if scores[scores['Property'] == 'No match']['Score'].iloc[0] < 0.5
         ],
         key=lambda x: -x[1][x[1]['Property'] == 'Exact match']['Score'].iloc[0]
     )
