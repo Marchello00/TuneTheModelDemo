@@ -60,7 +60,7 @@ def translate(texts, target_language='ru', folder_id=DEFAULT_CLOUD_FOLDER):
         "folderId": folder_id,
     }
 
-    headers = get_headers(iam=True)
+    headers = get_headers()
 
     response = requests.post(
         TRANSLATE_API,
